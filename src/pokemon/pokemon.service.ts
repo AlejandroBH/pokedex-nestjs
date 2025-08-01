@@ -64,7 +64,7 @@ export class PokemonService {
     const pokemon = await this.findOne(term);
 
     if (updatePokemonDto.name) {
-      updatePokemonDto.name = updatePokemonDto.name.toLocaleLowerCase();
+      updatePokemonDto.name = updatePokemonDto.name.toLocaleLowerCase().trim();
 
       try {
         await pokemon.updateOne(updatePokemonDto);
