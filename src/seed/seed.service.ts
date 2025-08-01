@@ -14,17 +14,54 @@ export class SeedService {
     private readonly pokemonModel: Model<Pokemon>,
   ) {}
 
+  // async executeSeed() {
+  //   await this.pokemonModel.deleteMany({}); // delete * from pokemon
+
+  //   const { data } = await this.axios.get<PokeResponse>(
+  //     'https://pokeapi.co/api/v2/pokemon?limit=10',
+  //   );
+
+  //   const insertPromisesArray = [];
+
+  //   data.results.forEach(({ name, url }) => {
+  //     const segments = url.split('/');
+  //     const no = +segments[segments.length - 2];
+
+  //     // await this.pokemonModel.create({ name, no });
+  //     insertPromisesArray.push(this.pokemonModel.create({ name, no }));
+  //   });
+
+  //   const newArray = await Promise.all(insertPromisesArray);
+
+  //   return newArray;
+  // }
+
   async executeSeed() {
+    await this.pokemonModel.deleteMany({}); // delete * from pokemon
+
     const { data } = await this.axios.get<PokeResponse>(
-      'https://pokeapi.co/api/v2/pokemon?limit=10',
+      'https://pokeapi.co/api/v2/pokemon?limit=650',
     );
 
-    data.results.forEach(async ({ name, url }) => {
+    const pokemonToInsert: { name: string; no: number }[] = [];
+
+    data.results.forEach(({ name, url }) => {
       const segments = url.split('/');
       const no = +segments[segments.length - 2];
 
-      await this.pokemonModel.create({ name, no });
+      // await this.pokemonModel.create({ name, no });
+      pokemonToInsert.push({ name, no }); // [{name: bulbasaur, no: 1}]
     });
+
+    await this.pokemonModel.insertMany(pokemonToInsert);
+    // insert into pokemons (name,no)
+    // (name: bulbasaur, no: 1)
+    // (name: bulbasaur, no: 1)
+    // (name: bulbasaur, no: 1)
+    // (name: bulbasaur, no: 1)
+    // (name: bulbasaur, no: 1)
+    // (name: bulbasaur, no: 1)
+    // (name: bulbasaur, no: 1)
 
     return 'Seed Executed';
   }
